@@ -15,12 +15,18 @@ struct fall_off_map_event { std::uint8_t player_id; };
 struct impact_event { point pos; };
 struct motion_event { std::vector<state> trajectory; };
 
-using event = std::variant <
+using event_body_t = std::variant <
     respawn_event,
     shoot_event,
     fall_off_map_event,
     impact_event,
     motion_event>;
+
+struct event {
+    event_body_t event_body;
+    int active_player_id;
+    bool simulated;
+};
 
 } // namespace tg
 

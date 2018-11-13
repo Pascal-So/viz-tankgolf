@@ -7,6 +7,7 @@ namespace fs = std::filesystem;
 
 namespace tg {
 
+void render_frame(const state& st);
 void render_match(const std::vector<event>& match, const fs::path& outpath);
 
 } // namespace tg

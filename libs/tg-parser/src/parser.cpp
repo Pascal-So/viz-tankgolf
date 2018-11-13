@@ -3,9 +3,11 @@
 #include <tg-types/state.hpp>
 
 #include <nlohmann/json.hpp>
+#include <string>
 #include <sstream>
 #include <stdexcept>
 using json = nlohmann::json;
+
 
 namespace tg {
 
@@ -33,7 +35,7 @@ std::vector<state> parse_json_trajectory(const json& j) {
     return out;
 }
 
-event parse_json_event(const json& j) {
+event_body_t parse_json_event_body(const json& j) {
     if (j.find("type") == j.end())
         throw std::invalid_argument("Event type missing while parsing json.");
 
@@ -53,19 +55,22 @@ event parse_json_event(const json& j) {
         throw std::invalid_argument("Unknown event type '" + type + "' while parsing json.");
 }
 
+event parse_json_event(const json& j) {
+    if (j.find("event") == j.end())
+        throw std::invalid_argument("Event field missing while parsing json.");
+
+    return event {parse_json_event_body(j["event"]), j["active_player_id"], j["simulated"]};
+}
+
 std::vector<event> parse_events(const std::string& json_log_data) {
     std::vector<event> out;
     std::stringstream in (json_log_data);
 
-    std::string dummy;
-    if (!(in >> dummy))
-        return out;
-
-    in.seekg(0);
-
-    json j;
-    while (in >> j)
-        out.push_back(parse_json_event(j));
+    std::string line;
+    while (std::getline(in, line)) {
+        if (line == "") continue;
+        out.push_back(parse_json_event(json::parse(line)));
+    }
 
     return out;
 }
