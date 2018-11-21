@@ -5,16 +5,21 @@ project(viz-tankgolf
     LANGUAGES CXX
 )
 
+# The library tg-types is required by the other libs, so it has to be added first.
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/tg-types)
+
+# These libs are independent, so the order doesn't matter.
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/tg-parser)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/tg-judge)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/tg-renderer)
+
 add_executable(viz-tankgolf
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
 )
-
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/tg-types)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/tg-parser)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/tg-renderer)
 target_link_libraries(viz-tankgolf
     PRIVATE
         tg-types
         tg-parser
         tg-renderer
+        tg-judge
 )

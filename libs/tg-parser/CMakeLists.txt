@@ -5,16 +5,15 @@ project(tg-parser
 )
 
 add_library(tg-parser
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/parser.cpp
+    src/parser.cpp
 )
 target_compile_features(tg-parser PRIVATE cxx_std_17)
 
 target_include_directories(tg-parser
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+    PUBLIC include
 )
 
-option(JSON_BuildTests "" OFF)
-add_subdirectory(../json ${CMAKE_CURRENT_BINARY_DIR}/json)
+add_subdirectory(../json ${CMAKE_CURRENT_BINARY_DIR}/json EXCLUDE_FROM_ALL)
 target_link_libraries(tg-parser
     PRIVATE
         nlohmann_json::nlohmann_json

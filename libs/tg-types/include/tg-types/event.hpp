@@ -28,6 +28,8 @@ struct event {
     bool simulated;
 };
 
+using match_t = std::vector<event>;
+
 } // namespace tg
 
 #endif // EVENT_HPP

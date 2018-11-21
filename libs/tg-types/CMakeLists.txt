@@ -5,10 +5,10 @@ project(tg-types
 )
 
 add_library(tg-types
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/point.cpp
+    src/point.cpp
 )
 target_compile_features(tg-types PUBLIC cxx_std_17)
 
 target_include_directories(tg-types
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+    PUBLIC include
 )
