@@ -8,7 +8,7 @@
 
 namespace tg {
 
-unsigned compute_winner(const match_t& match) {
+std::uint8_t compute_winner(const match_t& match) {
     std::array<unsigned, 2> scores;
 
     std::for_each(match.begin(), match.end(), [&](const event& ev){
@@ -39,7 +39,7 @@ double compute_style_score(const match_t& match) {
             std::visit(overloaded {
                 [&](const motion_event& e) {
                     std::array<orientation, 2> last_tanks = e.trajectory[0].tanks;
-                    for (const state& st : e.trajectory) {
+                    for (const physics_state& st : e.trajectory) {
                         ticks ++;
                         const auto& tanks = st.tanks;
                         for (std::size_t i = 0; i < 2; ++i) {

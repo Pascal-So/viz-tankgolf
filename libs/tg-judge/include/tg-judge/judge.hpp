@@ -5,7 +5,7 @@
 
 namespace tg {
 
-unsigned compute_winner(const match_t& match);
+std::uint8_t compute_winner(const match_t& match);
 
 // higher style score => higher chance that we might want to
 // show parts of this match at soi-day

@@ -3,10 +3,11 @@
 
 #include <tg-types/event.hpp>
 #include <vector>
+#include <istream>
 
 namespace tg {
 
-std::vector<event> parse_events(const std::string& json_log_data);
+std::vector<event> parse_events(std::istream& json_log_stream);
 
 } // namespace tg
 

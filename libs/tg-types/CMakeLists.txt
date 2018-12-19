@@ -6,6 +6,7 @@ project(tg-types
 
 add_library(tg-types
     src/point.cpp
+    src/state.cpp
 )
 target_compile_features(tg-types PUBLIC cxx_std_17)
 

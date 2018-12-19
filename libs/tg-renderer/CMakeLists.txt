@@ -6,6 +6,7 @@ project(tg-renderer
 
 add_library(tg-renderer
     src/renderer.cpp
+    src/animation.cpp
 )
 target_compile_features(tg-renderer PRIVATE cxx_std_17)
 
@@ -20,4 +21,11 @@ target_link_libraries(tg-renderer
         sfml-graphics
     PUBLIC
         tg-types
+        stdc++fs
+)
+
+add_custom_command(TARGET tg-renderer POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_LIST_DIR}/resources
+        ${CMAKE_BINARY_DIR}/resources
 )

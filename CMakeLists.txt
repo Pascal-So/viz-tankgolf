@@ -13,6 +13,11 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/tg-parser)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/tg-judge)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/tg-renderer)
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL GNU OR
+   CMAKE_CXX_COMPILER_ID STREQUAL Clang)
+    string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra -Wpedantic -O3")
+endif()
+
 add_executable(viz-tankgolf
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
 )

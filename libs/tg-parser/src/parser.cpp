@@ -3,8 +3,6 @@
 #include <tg-types/state.hpp>
 
 #include <nlohmann/json.hpp>
-#include <string>
-#include <sstream>
 #include <stdexcept>
 using json = nlohmann::json;
 
@@ -19,18 +17,18 @@ orientation parse_json_orientation(const json& j) {
     return orientation {parse_json_point(j["pos"]), j["rot"]};
 }
 
-state parse_json_state(const json& j) {
+physics_state parse_json_physics_state(const json& j) {
     const std::array<orientation, 2> tanks = {
         parse_json_orientation(j["tanks"][0]),
         parse_json_orientation(j["tanks"][1])
     };
-    return state {tanks, parse_json_point(j["bullet"])};
+    return physics_state {tanks, parse_json_point(j["bullet"])};
 }
 
-std::vector<state> parse_json_trajectory(const json& j) {
-    std::vector<state> out;
+std::vector<physics_state> parse_json_trajectory(const json& j) {
+    std::vector<physics_state> out;
     for (auto const& s:j) {
-        out.push_back(parse_json_state(s));
+        out.push_back(parse_json_physics_state(s));
     }
     return out;
 }
@@ -44,7 +42,7 @@ event_body_t parse_json_event_body(const json& j) {
     if (type == "respawn")
         return respawn_event {j["x_position"]};
     else if (type == "shoot")
-        return shoot_event {j["angle"], j["intensity"]};
+        return shoot_event { tank_aim{j["angle"], j["intensity"]} };
     else if (type == "fall_off_map")
         return fall_off_map_event {j["player_id"]};
     else if (type == "impact")
@@ -62,12 +60,11 @@ event parse_json_event(const json& j) {
     return event {parse_json_event_body(j["event"]), j["active_player_id"], j["simulated"]};
 }
 
-std::vector<event> parse_events(const std::string& json_log_data) {
+std::vector<event> parse_events(std::istream& json_log_stream) {
     std::vector<event> out;
-    std::stringstream in (json_log_data);
 
     std::string line;
-    while (std::getline(in, line)) {
+    while (std::getline(json_log_stream, line)) {
         if (line == "") continue;
         out.push_back(parse_json_event(json::parse(line)));
     }
