@@ -24,6 +24,9 @@ class renderer {
     sf::Texture bullet_texture;
     sf::Sprite bullet_sprite;
 
+    sf::Texture explosion_texture;
+    sf::Sprite explosion_sprite;
+
     sf::Font font;
     std::array<sf::Text, 2> player_name_texts;
     sf::Text score_text;
@@ -62,10 +65,17 @@ public:
         bullet_texture.loadFromFile("resources/bullet.png");
         bullet_sprite.setTexture(bullet_texture);
 
+        explosion_texture.loadFromFile("resources/explosion.png");
+        explosion_sprite.setTexture(explosion_texture);
+
         font.loadFromFile("resources/NotoSansSC-Light.otf");
 
         background_sprite.setScale(1, -1);
         background_sprite.setOrigin(0, 1080);
+
+        bullet_sprite.setOrigin(10, 10);
+        explosion_sprite.setOrigin(40, 40);
+        bullet_sprite.setScale(1, -1);
 
         for(int i = 0; i < 2; ++i) {
             tank_sprites[i].setOrigin(114/2, 110);
@@ -77,9 +87,9 @@ public:
             player_name_texts[i].setFillColor(sf::Color::White);
             player_name_texts[i].setScale(1, -1);
         }
-        player_name_texts[0].setPosition(188, 80);
+        player_name_texts[0].setPosition(188, 90);
         const float text1_width = player_name_texts[1].getLocalBounds().width;
-        player_name_texts[1].setPosition(1920-188-text1_width, 80);
+        player_name_texts[1].setPosition(1920-188-text1_width, 90);
 
         for(auto& blocker : blockers) {
             blocker.setFillColor(sf::Color(0x22, 0x22, 0x22));
@@ -126,6 +136,16 @@ public:
             buf.draw(bullet_sprite);
         }
 
+        if (st.frontend.explosion_intensity > 0) {
+            explosion_sprite.setPosition(transform_coordinates(st.frontend.explosion_position));
+            float explosion_scale = st.frontend.explosion_intensity / 2.0;
+            if (st.frontend.explosion_intensity == 5) {
+                explosion_scale = 1;
+            }
+            explosion_sprite.setScale(explosion_scale, explosion_scale);
+            buf.draw(explosion_sprite);
+        }
+
         for (auto& blocker : blockers) {
             buf.draw(blocker);
         }
@@ -170,8 +190,6 @@ void save_to_file(const Buffer& buf, const fs::path& outpath, const unsigned ima
     ss << "frame_" << std::setw(4) << std::setfill('0') << image_id << ".jpg";
     const std::string filename = ss.str();
 
-    std::cerr << "saving file " << filename << '\n';
-
     buf.getTexture().copyToImage().saveToFile(outpath / filename);
 }
 
@@ -183,13 +201,19 @@ void render_match(const match_t& match, const fs::path& outpath, const std::arra
     settings.antialiasingLevel = 8;
 
     sf::RenderTexture buf;
-    buf.create(1920, 1080); //, settings);
+    buf.create(1920, 1080);
 
-    for (unsigned i = 0;; ++i) {
-        if (!anim.next_frame())
+    for (unsigned i = 1;; ++i) {
+        if (!anim.next_frame()) {
+            // Copy the last frame x times to make the final score change
+            // visible for longer than one frame.
+            for (int j = 0; j < 8; ++j) {
+                save_to_file(buf, outpath, i);
+                ++i;
+            }
             break;
+        }
 
-        // buf.clear(sf::Color(30, 30, 30));
         r.render_state(buf, anim.current_state);
 
         save_to_file(buf, outpath, i);

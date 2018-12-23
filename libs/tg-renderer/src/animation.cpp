@@ -10,10 +10,11 @@ animation::animation(const match_t& match)
     : match (match) {}
 
 bool animation::next_frame() {
-    current_state.frontend.bullet_exploding = false;
+    if (current_state.frontend.explosion_intensity > 0)
+        -- current_state.frontend.explosion_intensity;
     bool something_happened = false;
 
-    while (!something_happened || event_counter == match.size()) {
+    while (!something_happened && event_counter < match.size()) {
         const event& ev = match[event_counter];
         std::visit(overloaded {
             [&](const respawn_event& e) {
@@ -40,7 +41,8 @@ bool animation::next_frame() {
             },
             [&](const impact_event& e) {
                 if (!ev.simulated) {
-                    current_state.frontend.bullet_exploding = true;
+                    current_state.frontend.explosion_intensity = 5;
+                    current_state.frontend.explosion_position = e.pos;
                     // something_happened = true;
                 }
                 ++ event_counter;

@@ -24,7 +24,8 @@ struct tank_aim {
 
 struct frontend_state {
     std::array<tank_aim, 2> tank_aims;
-    bool bullet_exploding = false;
+    unsigned explosion_intensity = 0;
+    point explosion_position;
 };
 
 struct state {

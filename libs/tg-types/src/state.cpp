@@ -13,10 +13,11 @@ std::ostream& operator<<(std::ostream& stream, const state& st) {
         stream << "    Int.:  " << aim.intensity << '\n';
     }
     stream << "Bullet:\n";
-    stream << "    " << st.physics.bullet;
-    if (st.frontend.bullet_exploding)
-        stream << " (exploding)";
-    stream << '\n';
+    stream << "    " << st.physics.bullet << '\n';
+
+    stream << "Explosion:\n";
+    stream << "    Int.:  " << st.frontend.explosion_intensity << '\n';
+    stream << "    Pos:   " << st.frontend.explosion_position << '\n';
 
     return stream;
 }

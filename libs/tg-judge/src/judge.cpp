@@ -95,4 +95,20 @@ double compute_style_score(const match_t& match) {
         long_motion_score * -1000.0;
 }
 
+unsigned longest_motion(const match_t& match) {
+    unsigned longest = 0;
+
+    std::for_each(match.begin(), match.end(), [&](const event& ev){
+        if (ev.simulated) return;
+        std::visit(overloaded {
+            [&](const motion_event& e) {
+                longest = std::max<unsigned>(e.trajectory.size(), longest);
+            },
+            [](const auto&) {/* ignore */}
+        }, ev.event_body);
+    });
+
+    return longest;
+}
+
 } // namespace tg

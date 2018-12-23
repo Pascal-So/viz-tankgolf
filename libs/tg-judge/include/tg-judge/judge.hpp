@@ -11,6 +11,8 @@ std::uint8_t compute_winner(const match_t& match);
 // show parts of this match at soi-day
 double compute_style_score(const match_t& match);
 
+unsigned longest_motion(const match_t& match);
+
 } // namespace tg
 
 #endif // JUDGE_HPP

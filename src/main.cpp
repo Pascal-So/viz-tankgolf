@@ -9,18 +9,30 @@
 #include <fstream>
 
 int main(int argc, char** argv) {
-    if (argc != 2) {
-        std::cerr << "usage: " << std::string(argv[0]) << " logfile\n";
+    if (argc != 5) {
+        std::cerr << "usage: " << std::string(argv[0]) << " logfile name1 name2 output_path\n";
         return 1;
     }
     const std::string logfile(argv[1]);
     std::ifstream match_stream(logfile);
     const auto match = tg::parse_events(match_stream);
     std::cerr << "parsed file (" << match.size() << " events)\n";
-    std::cout << "Winner: player " << (char)('A' + tg::compute_winner(match)) << '\n';
+
+    const auto longest_motion = tg::longest_motion(match);
+    std::cerr << "Longest motion: " << longest_motion << '\n';
+    if (longest_motion > 300) {
+        std::cerr << "probably contains physics errors. please rerun.\n";
+        return 1;
+    }
+
+    std::array<std::string,2> names;
+    names[0] = argv[2];
+    names[1] = argv[3];
+
+    const std::string output_path(argv[4]);
 
     // auto anim = tg::animation{match};
     // auto frame = anim.next_frame();
     // std::cerr << frame;
-    tg::render_match(match, "out", {"nicolas.camenisch d3i_bot", "chnuspi angry_bot"});
+    tg::render_match(match, output_path, names);
 }
